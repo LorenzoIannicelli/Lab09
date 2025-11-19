@@ -11,8 +11,6 @@ class Model:
         self._valore_ottimo: int = -1
         self._costo = 0
 
-        # TODO: Aggiungere eventuali altri attributi
-
         # Caricamento
         self.load_tour()
         self.load_attrazioni()
@@ -39,7 +37,11 @@ class Model:
             --> Ogni Attrazione ha un set di Tour.
         """
 
-        # TODO
+        relazioni = TourDAO.get_tour_attrazioni()
+        for relazione in relazioni :
+            self.tour_map[relazione['id_tour']].attrazioni.add(self.attrazioni_map[relazione['id_attrazione']])
+            self.attrazioni_map[relazione['id_attrazione']].tour.add(self.tour_map[relazione['id_tour']])
+
 
     def genera_pacchetto(self, id_regione: str, max_giorni: int = None, max_budget: float = None):
         """
@@ -56,7 +58,13 @@ class Model:
         self._costo = 0
         self._valore_ottimo = -1
 
-        # TODO
+        # scorrere i tour controllando il vincolo sulla regione
+        # controllare che i giorni complessivi non superi quelli specificati
+        # controllare ricorsione dopo ricorsione che costo_corrente non superi quello specificato
+
+        # controllare che il valore ottimo sia maggiore di quello precedente
+        # in caso sostituire i valori self._pacchetto_ottimo, self._costo e self._valore_ottimo
+
 
         return self._pacchetto_ottimo, self._costo, self._valore_ottimo
 
