@@ -11,6 +11,8 @@ class Model:
         self._valore_ottimo: int = -1
         self._costo = 0
 
+        self.lista_tour_regione = []
+
         # Caricamento
         self.load_tour()
         self.load_attrazioni()
@@ -42,6 +44,14 @@ class Model:
             self.tour_map[relazione['id_tour']].attrazioni.add(self.attrazioni_map[relazione['id_attrazione']])
             self.attrazioni_map[relazione['id_attrazione']].tour.add(self.tour_map[relazione['id_tour']])
 
+    def load_lista_tour_regione(self, regione):
+        self.lista_tour_regione = []
+
+        for tour in self.tour_map:
+            if tour.id_regione == regione:
+                self.lista_tour_regione.append(tour)
+
+
 
     def genera_pacchetto(self, id_regione: str, max_giorni: int = None, max_budget: float = None):
         """
@@ -58,6 +68,9 @@ class Model:
         self._costo = 0
         self._valore_ottimo = -1
 
+        self.load_lista_tour_regione(id_regione)
+
+
         # scorrere i tour controllando il vincolo sulla regione
         # controllare che i giorni complessivi non superi quelli specificati
         # controllare ricorsione dopo ricorsione che costo_corrente non superi quello specificato
@@ -71,4 +84,5 @@ class Model:
     def _ricorsione(self, start_index: int, pacchetto_parziale: list, durata_corrente: int, costo_corrente: float, valore_corrente: int, attrazioni_usate: set):
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
 
-        # TODO: è possibile cambiare i parametri formali della funzione se ritenuto opportuno
+        for tour in self.lista_tour_regione[start_index:]:
+            pass
