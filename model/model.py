@@ -120,11 +120,12 @@ class Model:
             if self._is_tour_acceptable(tour, durata_corrente, costo_corrente, attrazioni_usate):
                 pacchetto_parziale.append(tour)
                 valore_culturale = sum([attrazione.valore_culturale for attrazione in tour.attrazioni])
+                attrazioni_usate.update(tour.attrazioni)
                 self._ricorsione(start_index+1,
                                  pacchetto_parziale,
                                  durata_corrente+tour.durata_giorni,
                                  costo_corrente+tour.costo,
                                  valore_corrente+valore_culturale,
-                                 attrazioni_usate.update(tour.attrazioni))
+                                 attrazioni_usate)
 
                 pacchetto_parziale.pop()
