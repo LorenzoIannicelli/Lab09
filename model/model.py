@@ -11,6 +11,9 @@ class Model:
         self._valore_ottimo: int = -1
         self._costo = 0
 
+        self._max_giorni = None
+        self._max_budget = None
+
         self.lista_tour_regione = []
 
         # Caricamento
@@ -44,16 +47,16 @@ class Model:
             self.tour_map[relazione['id_tour']].attrazioni.add(self.attrazioni_map[relazione['id_attrazione']])
             self.attrazioni_map[relazione['id_attrazione']].tour.add(self.tour_map[relazione['id_tour']])
 
-    def load_lista_tour_regione(self, regione, max_giorni, max_budget):
+    def load_lista_tour_regione(self, regione):
         self.lista_tour_regione = []
 
         for tour in self.tour_map:
             if tour.id_regione == regione:
-                if max_giorni is None and max_budget is None:
+                if self._max_giorni is None and self._max_budget is None:
                     self.lista_tour_regione.append(tour)
-                elif max_giorni is not None and tour.durata_giorni <= max_giorni :
+                elif self._max_giorni is not None and tour.durata_giorni <= self._max_giorni :
                     self.lista_tour_regione.append(tour)
-                elif max_budget is not None and tour.costo <= max_budget :
+                elif self._max_budget is not None and tour.costo <= self._max_budget :
                     self.lista_tour_regione.append(tour)
 
     def genera_pacchetto(self, id_regione: str, max_giorni: int = None, max_budget: float = None):
@@ -71,21 +74,28 @@ class Model:
         self._costo = 0
         self._valore_ottimo = -1
 
-        self.load_lista_tour_regione(id_regione, max_giorni, max_budget)
+        self._max_giorni = max_giorni
+        self._max_budget = max_budget
 
+        self.load_lista_tour_regione(id_regione)
 
-        # scorrere i tour controllando il vincolo sulla regione
-        # controllare che i giorni complessivi non superi quelli specificati
-        # controllare ricorsione dopo ricorsione che costo_corrente non superi quello specificato
-
-        # controllare che il valore ottimo sia maggiore di quello precedente
-        # in caso sostituire i valori self._pacchetto_ottimo, self._costo e self._valore_ottimo
-
+        self._ricorsione(0, [], 0, 0, 0, set())
 
         return self._pacchetto_ottimo, self._costo, self._valore_ottimo
 
     def _ricorsione(self, start_index: int, pacchetto_parziale: list, durata_corrente: int, costo_corrente: float, valore_corrente: int, attrazioni_usate: set):
         """ Algoritmo di ricorsione che deve trovare il pacchetto che massimizza il valore culturale"""
 
+        # qui dovrei controllare il valore corrente
+        # se è minore di quello precedente, allora settare
+        # self._pacchetto_ottimo e self._valore_ottimo
+
         for tour in self.lista_tour_regione[start_index:]:
+            # condizioni da controllare (magari con una funzione) :
+            # - tour not in pacchetto parziale (controlla che il tour non sia già presente, forse superfluo)
+            # - durata_corrente + tour.durata_giorni < self._max_giorni
+            # - costo_corrente + tour.costo < self._max_budget
+            # - attrazioni_usate.intersection(tour.attrazioni) is None
+            #
+            # se tutte risultano vere, pacchetto_parziale.append(tour)
             pass
