@@ -44,14 +44,17 @@ class Model:
             self.tour_map[relazione['id_tour']].attrazioni.add(self.attrazioni_map[relazione['id_attrazione']])
             self.attrazioni_map[relazione['id_attrazione']].tour.add(self.tour_map[relazione['id_tour']])
 
-    def load_lista_tour_regione(self, regione):
+    def load_lista_tour_regione(self, regione, max_giorni, max_budget):
         self.lista_tour_regione = []
 
         for tour in self.tour_map:
             if tour.id_regione == regione:
-                self.lista_tour_regione.append(tour)
-
-
+                if max_giorni is None and max_budget is None:
+                    self.lista_tour_regione.append(tour)
+                elif max_giorni is not None and tour.durata_giorni <= max_giorni :
+                    self.lista_tour_regione.append(tour)
+                elif max_budget is not None and tour.costo <= max_budget :
+                    self.lista_tour_regione.append(tour)
 
     def genera_pacchetto(self, id_regione: str, max_giorni: int = None, max_budget: float = None):
         """
@@ -68,7 +71,7 @@ class Model:
         self._costo = 0
         self._valore_ottimo = -1
 
-        self.load_lista_tour_regione(id_regione)
+        self.load_lista_tour_regione(id_regione, max_giorni, max_budget)
 
 
         # scorrere i tour controllando il vincolo sulla regione
